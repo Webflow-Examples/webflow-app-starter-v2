@@ -1,7 +1,7 @@
 import { AuthorizationCode } from "simple-oauth2";
-import { createHmac } from "crypto";
-import Client from "webflow-api";
-import { Level } from "level";
+import { createHmac } from "crypto"; // Use HMAC to verify Webflow Webhook signatures
+import Client from "webflow-api"; // Interact with the Webflow API
+import { Level } from "level"; // Abstract database to serve as our key value store
 
 class App {
   /**
@@ -11,7 +11,7 @@ class App {
   constructor(clientId, clientSecret) {
     this.clientSecret = clientSecret;
 
-    // KVS for app data
+    // Create data folder to store data
     this.data = new Level("data");
 
     // OAuth options
@@ -40,7 +40,17 @@ class App {
    */
   async install(code) {
     const access = await this.oauth.getToken({ code });
+    this.storeToken(access.token.access_token);
     return access.token.access_token;
+  }
+
+  async storeToken(token) {
+    await this.data.put("token", token);
+  }
+
+  async getToken() {
+    const app_token = await this.data.get("token");
+    return app_token;
   }
 
   /**
@@ -81,7 +91,25 @@ class App {
    *
    * @return The Webflow installation url
    */
+
   installUrl(params = {}) {
+    params.scope = [
+      "assets:read",
+      "assets:write",
+      "authorized_user:read",
+      "cms:read",
+      "cms:write",
+      "custom_code:read",
+      "custom_code:write",
+      "forms:read",
+      "forms:write",
+      "pages:read",
+      "pages:write",
+      "sites:read",
+      "sites:write",
+      "webhooks:read",
+      "webhooks:write",
+    ];
     return this.oauth.authorizeURL(params);
   }
 

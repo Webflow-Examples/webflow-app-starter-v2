@@ -1,9 +1,15 @@
 # Webflow App Starter
 
-Use this starter to spin-up a Webflow App server, enable OAuth installation, create webhooks on sites, and respond to those webhook events.
+Use this starter to:
+- spin-up a Webflow App server
+- enable OAuth installation
+- create webhooks on sites and respond to those webhook events.
 
-This project is not meant to be used in production - only an example of how to create an integtation that uses OAuth. The access tokens are being stored in a KVS and looked-up by site id. In production, you'll need to encrypt these access tokens and likely store more than just the token.
+This project is not meant to be used in production - only an example of how to create an integtation that uses OAuth. The access tokens are being stored in a key-value store and looked-up by site id. 
 
+In production, you'll need to encrypt these access tokens and likely store more than just the token.
+
+***
 ## Get Running
 
 1. [Register](https://developers.webflow.com/#oauth-applications) an OAuth App in Webflow

@@ -1,13 +1,17 @@
 import Webflow from "webflow-api";
 import App from "./webflow.js";
 import Fastify from "fastify";
+import fastifyStatic from "@fastify/static";
+import path from "path";
+import url from "url";
 
 // Load environment variables from .env file
-const { CLIENT_ID, CLIENT_SECRET, SERVER_HOST, PORT } = process.env;
+const { WEBFLOW_CLIENT_ID, WEBFLOW_SECRET, SERVER_HOST, PORT } = process.env;
 
 // Create a new Webflow App instance
-const app = new App(CLIENT_ID, CLIENT_SECRET);
+const app = new App(WEBFLOW_CLIENT_ID, WEBFLOW_SECRET);
 
+// Instantiate Fastify server
 const server = Fastify({
   logger: true,
 });
@@ -35,22 +39,34 @@ server.post("/webhook", async (req, reply) => {
   reply.statusCode = 200;
 });
 
-// Install the App
+// If we recieve a get request to the root (localhost:5500) then the server will route to the static index page
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
+
+server.register(fastifyStatic, {
+  root: path.join(__dirname, "static"),
+});
+
 server.get("/", async (req, reply) => {
+  await reply.sendFile("index.html");
+});
+
+// If we recieve a get request to /auth then the server will install our App via OAuth
+server.get("/auth", async (req, reply) => {
   const { code } = req.query;
 
   // If a code is passed in, attempt to install the App
   // othersise, redirect to the install URL to start OAuth
+
   if (code) {
-    // install the App and get an access token
+    // install the App and get and store an access token
     const token = await app.install(code);
+    const test = await app.storeToken(token);
 
-    // add webhook to each site
-    const triggerType = "site_publish";
-    const url = SERVER_HOST + "/webhook";
-    const webhooks = app.addWebhooks(triggerType, url, token);
+    console.log("HELOOOOOOOOOOOOO");
+    console.log(token);
 
-    return webhooks;
+    return reply.sendFile("index.html");
   } else {
     // Generate a URL for a user to install the App on Webflow
     const installUrl = app.installUrl();
@@ -60,6 +76,16 @@ server.get("/", async (req, reply) => {
   }
 });
 
-server.listen({ port: PORT, host: "0.0.0.0" }, (err) => {
+// List Sites
+server.get("/sites", async (req, reply) => {
+  const token = await app.getToken(); // get token from database
+
+  const webflow = new Webflow({ token });
+  const user = await webflow.get("/info");
+
+  return user;
+});
+
+server.listen({ port: PORT, host: "localhost" }, (err) => {
   if (err) throw err;
 });
