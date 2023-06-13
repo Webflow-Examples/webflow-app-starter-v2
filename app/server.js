@@ -63,8 +63,10 @@ server.get("/auth", async (req, reply) => {
     const token = await app.install(code);
     const test = await app.storeToken(token);
 
-    console.log("HELOOOOOOOOOOOOO");
+    console.log("\n\n\n\n");
+    console.log("This is your ACCESS_TOKEN:");
     console.log(token);
+    console.log("\n\n\n\n");
 
     return reply.sendFile("index.html");
   } else {
@@ -81,9 +83,9 @@ server.get("/sites", async (req, reply) => {
   const token = await app.getToken(); // get token from database
 
   const webflow = new Webflow({ token });
-  const user = await webflow.get("/info");
+  const sites = await webflow.get("/beta/sites");
 
-  return user;
+  return sites;
 });
 
 server.listen({ port: PORT, host: "localhost" }, (err) => {

@@ -107,8 +107,6 @@ class App {
       "pages:write",
       "sites:read",
       "sites:write",
-      "webhooks:read",
-      "webhooks:write",
     ];
     return this.oauth.authorizeURL(params);
   }
