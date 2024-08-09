@@ -1,0 +1,22 @@
+{
+    "window.density.editorTabHeight": "default",
+    "workbench.editor.defaultBinaryEditor": "default",
+    "workbench.editor.pinnedTabSizing": "normal",
+    "workbench.editor.pinnedTabsOnSeparateRow": false,
+    "workbench.editor.autoLockGroups": {
+        "terminalEditor": false,
+        "mainThreadWebview-simpleBrowser.view": false,
+        "mainThreadWebview-browserPreview": false
+    },
+    "workbench.editor.showTabs": "single",
+    "workbench.editor.splitInGroupLayout": "vertical",
+    "workbench.editor.doubleClickTabToToggleEditorGroupSizes": "maximize",
+    "workbench.editor.restoreViewState": false,
+    "workbench.editor.tabSizing": "shrink",
+    "workbench.editor.enablePreview": false,
+    "workbench.editor.centeredLayoutAutoResize": false,
+    "workbench.editor.closeEmptyGroups": false,
+    "workbench.editor.customLabels.enabled": false,
+    "workbench.editor.decorations.badges": false,
+    "workbench.editor.dragToOpenWindow": false
+}

@@ -3,6 +3,16 @@ import { createHmac } from "crypto"; // Use HMAC to verify Webflow Webhook signa
 import Client from "webflow-api"; // Interact with the Webflow API
 import { Level } from "level"; // Abstract database to serve as our key value store
 
+import { WebflowClient } from "webflow-api";
+
+const accessToken = WebflowClient.getAccessToken({
+  clientId: process.env.WEBFLOW_CLIENT_ID,
+  clientSecret: process.env.WEBFLOW_SECRET,
+  code: "Bearer c6cf4c0a73ee2b82259e252c4fae3c1f78abf766660bb6c5f96c7e3b2a653a90"
+
+});
+
+
 class App {
   /**
    * @param {string} clientId The OAuth client ID for the app
