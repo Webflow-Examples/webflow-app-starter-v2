@@ -56,7 +56,7 @@ server.get("/auth", async (req, reply) => {
   const { code } = req.query;
 
   // If a code is passed in, attempt to install the App
-  // othersise, redirect to the install URL to start OAuth
+  // otherwise, redirect to the install URL to start OAuth
 
   if (code) {
     // install the App and get and store an access token
