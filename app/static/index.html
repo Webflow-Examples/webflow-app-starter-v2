@@ -3,35 +3,182 @@
 
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <meta http-equiv="x-ua-compatible" content="ie=edge" />
-  <title>Webflow Oauth</title>
-  <link href="https://fonts.googleapis.com/css2?family=Arvo&family=Kumbh+Sans&display=swap" rel="stylesheet" />
-  <link href="style.css" rel="stylesheet" />
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Webflow API Explorer</title>
+
+  <!-- External Resources -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+
+  <style>
+    /* Base Styles */
+    :root {
+      --primary: #2D2D2D;
+      --spacing-sm: 1rem;
+      --spacing-md: 2rem;
+      --spacing-lg: 4rem;
+      --radius: 8px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.5;
+      color: var(--primary);
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-md);
+    }
+
+    /* Welcome Section */
+    .welcome {
+      text-align: center;
+      padding: var(--spacing-lg) 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .welcome img {
+      width: 64px;
+      height: 64px;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .welcome h1 {
+      font-size: 2.5rem;
+      margin-bottom: var(--spacing-md);
+    }
+
+    /* API Explorer Section */
+    .explorer {
+      margin-top: var(--spacing-lg);
+      padding: var(--spacing-md);
+      background: #f8f9fa;
+      border-radius: var(--radius);
+    }
+
+    .explorer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-md);
+    }
+
+    /* Button Styles */
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* JSON Display */
+    .json-container {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-top: var(--spacing-md);
+    }
+
+    .json-display {
+      margin: 0;
+      padding: var(--spacing-md);
+      background: #1e1e1e;
+      border-radius: var(--radius);
+      overflow-x: auto;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* Auth States */
+    .unauthorized .explorer {
+      display: none;
+    }
+
+    .unauthorized .welcome-auth {
+      display: none;
+    }
+
+    .authorized .welcome-unauth {
+      display: none;
+    }
+
+    /* Ensure explorer is visible when authorized */
+    .authorized .explorer {
+      display: block;
+    }
+
+    /* Container spacing */
+    .explorer {
+      margin-top: var(--spacing-lg);
+      padding: var(--spacing-md);
+      background: #f8f9fa;
+      border-radius: var(--radius);
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: var(--spacing-lg);
+      padding: var(--spacing-md) 0;
+      text-align: center;
+      color: #666;
+    }
+  </style>
 </head>
 
-<body>
-  <div class="content unauthorized">
-    <div class="top">
-      <img class="img-icon" src="webflow.png" />
-      <h1>Happy to see you<br />newcomer 👋</h1>
-    </div>
-    <div class="content-bottom">
-      <a class="btn" href="/auth">AUTHORIZE W. WEBFLOW</a>
-      <p class="sign-in-text">in order to get started</p>
-    </div>
-  </div>
-  <div class="content authorized" style="display: none">
-    <div class="top">
-      <img class="img-icon" src="webflow.png" />
-      <h1><span class="party-popper">🎉</span><br />Awesome!<br />You're authorized 🔒</h1>
-      <div class="content-bottom" <p>Send your first API Request Below</p>
-        <a class="btn" href="/sites">List Sites</a>
+<body class="unauthorized">
+  <div class="container">
+    <!-- Welcome Screen (only shown when unauthorized) -->
+    <section class="welcome welcome-unauth">
+      <img src="webflow.png" alt="Webflow Logo" />
+      <h1>Welcome to Webflow API Explorer</h1>
+      <p>Connect your Webflow account to get started</p>
+      <a href="/auth" class="btn">Connect with Webflow</a>
+    </section>
+
+    <!-- Authorized Welcome (only shown when authorized) -->
+    <section class="welcome welcome-auth">
+      <img src="webflow.png" alt="Webflow Logo" />
+      <h1>🎉 Connected to Webflow!</h1>
+      <p>Your account is now connected. Start exploring the API below.</p>
+    </section>
+
+    <!-- API Explorer (only shown when authorized) -->
+    <section class="explorer">
+      <div class="explorer-header">
+        <h2>Your Webflow Sites</h2>
+        <button id="getSitesBtn" class="btn">Fetch Sites</button>
       </div>
-    </div>
+
+      <div class="json-container">
+        <pre id="sitesData" class="json-display"><code class="language-json"></code></pre>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>Built with the Webflow API</p>
+    </footer>
   </div>
-  <script type="text/javascript" src="main.js"></script>
+
+  <script src="main.js"></script>
 </body>
 
 </html>

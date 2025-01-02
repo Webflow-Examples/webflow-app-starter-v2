@@ -19,6 +19,6 @@
     "level": "^8.0.0",
     "nodemon": "^2.0.20",
     "simple-oauth2": "^4.3.0",
-    "webflow-api": "^0.8.1"
+    "webflow-api": "^3.0.1"
   }
 }
