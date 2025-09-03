@@ -110,7 +110,7 @@ server.get("/sites", async (req, reply) => {
     const webflow = new WebflowClient({
       accessToken,
       // Add rate limiting and timeout options
-      timeOurInSeconds: 10000, // 10 second timeout
+      timeOutInSeconds: 10000, // 10 second timeout
       maxRetries: 3, // Retry up to 3 times
     });
 
